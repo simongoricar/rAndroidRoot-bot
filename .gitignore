@@ -27,6 +27,11 @@ MANIFEST
 # Poetry
 poetry.lock
 
+## Sensitive files
+# Ignore everything except *.EXAMPLE.* files
+data/*
+!data/*.EXAMPLE.*
+
 ## IDEs
 .idea
 # Feel free to add your own here or to your global gitignore
