@@ -1,3 +1,6 @@
+import uuid
+
+
 # Singleton can only be instantiated once, subsequent instances are the same
 class Singleton(type):
     """
@@ -9,3 +12,7 @@ class Singleton(type):
         if cls not in cls._instances:
             cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
         return cls._instances[cls]
+
+
+def generate_id(length: int = 4):
+    return int(str(uuid.uuid4().int)[:length])

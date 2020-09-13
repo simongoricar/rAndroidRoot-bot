@@ -8,6 +8,7 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.8"
 "discord.py" = "^1.4.1"
+commentjson = "^0.8.3"
 
 [tool.poetry.dev-dependencies]
 
