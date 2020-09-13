@@ -140,7 +140,7 @@ async def begin_verification(member: Member):
             if message.channel.id != auth_channel.id:
                 return False
 
-            if random_not_bot_text not in str(message.content):
+            if random_not_bot_text.lower() not in str(message.content).lower():
                 return False
             if random_emoji not in str(message.content):
                 return False
