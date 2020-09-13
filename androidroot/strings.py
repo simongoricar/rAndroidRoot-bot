@@ -20,26 +20,26 @@ STR_ON_MEMBER_JOIN: str = STRINGS.get("ON_MEMBER_JOIN")
 if STR_ON_MEMBER_JOIN is None:
     raise Exception("String ON_MEMBER_JOIN is missing!")
 
-ON_AUTH_BEGIN: str = STRINGS.get("ON_AUTH_BEGIN")
-if ON_AUTH_BEGIN is None:
-    raise Exception("String ON_AUTH_BEGIN is missing!")
+ON_VERIFICATION_BEGIN: str = STRINGS.get("ON_VERIFICATION_BEGIN")
+if ON_VERIFICATION_BEGIN is None:
+    raise Exception("String ON_VERIFICATION_BEGIN is missing!")
 
-AUTH_HOW: str = STRINGS.get("AUTH_HOW")
-if AUTH_HOW is None:
-    raise Exception("String AUTH_HOW is missing!")
+VERIFICATION_HOW: str = STRINGS.get("VERIFICATION_HOW")
+if VERIFICATION_HOW is None:
+    raise Exception("String VERIFICATION_HOW is missing!")
 
-AUTH_NOT_BOT_TEXT_LIST: list = STRINGS.get("AUTH_NOT_BOT_TEXT_LIST")
-if AUTH_NOT_BOT_TEXT_LIST is None:
-    raise Exception("List AUTH_NOT_BOT_TEXT_LIST is missing!")
+VERIFY_NOT_BOT_TEXT_LIST: list = STRINGS.get("VERIFY_NOT_BOT_TEXT_LIST")
+if VERIFY_NOT_BOT_TEXT_LIST is None:
+    raise Exception("List VERIFY_NOT_BOT_TEXT_LIST is missing!")
 
-AUTH_RANDOM_EMOJI_LIST: list = STRINGS.get("AUTH_RANDOM_EMOJI_LIST")
-if AUTH_RANDOM_EMOJI_LIST is None:
-    raise Exception("List AUTH_RANDOM_EMOJI_LIST is missing!")
+VERIFY_RANDOM_EMOJI_LIST: list = STRINGS.get("VERIFY_RANDOM_EMOJI_LIST")
+if VERIFY_RANDOM_EMOJI_LIST is None:
+    raise Exception("List VERIFY_RANDOM_EMOJI_LIST is missing!")
 
-AUTH_FAILED_TIMEOUT: str = STRINGS.get("AUTH_FAILED_TIMEOUT")
-if AUTH_FAILED_TIMEOUT is None:
-    raise Exception("String AUTH_FAILED_TIMEOUT is missing!")
+VERIFY_FAILED_TIMEOUT: str = STRINGS.get("VERIFY_FAILED_TIMEOUT")
+if VERIFY_FAILED_TIMEOUT is None:
+    raise Exception("String VERIFY_FAILED_TIMEOUT is missing!")
 
-AUTH_SUCCESS: str = STRINGS.get("AUTH_SUCCESS")
-if AUTH_SUCCESS is None:
-    raise Exception("String AUTH_SUCCESS is missing!")
+VERIFY_SUCCESS: str = STRINGS.get("VERIFY_SUCCESS")
+if VERIFY_SUCCESS is None:
+    raise Exception("String VERIFY_SUCCESS is missing!")
