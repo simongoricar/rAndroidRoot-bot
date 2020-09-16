@@ -12,6 +12,7 @@ When you are ready, run `poetry install` in the directory where you cloned the b
 
 ## 2. Configuration
 Copy and fill out the provided configuration in `data/config.EXAMPLE.ini`. You will need to enter a bunch of IDs about your server and your bot token.
+If you want you can also customize the bot responses in `data/strings.json`, but keep in mind you need to use the name names for *{placeholders}*.
 
 ## 3. Running
 If you have completed the steps above, it's time to start the bot. Run either `poetry run python bot.py` or the provided shell scripts. 
