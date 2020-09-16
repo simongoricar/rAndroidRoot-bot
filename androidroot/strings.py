@@ -28,10 +28,6 @@ VERIFICATION_HOW: str = STRINGS.get("VERIFICATION_HOW")
 if VERIFICATION_HOW is None:
     raise Exception("String VERIFICATION_HOW is missing!")
 
-VERIFY_NOT_BOT_TEXT_LIST: list = STRINGS.get("VERIFY_NOT_BOT_TEXT_LIST")
-if VERIFY_NOT_BOT_TEXT_LIST is None:
-    raise Exception("List VERIFY_NOT_BOT_TEXT_LIST is missing!")
-
 VERIFY_RANDOM_EMOJI_LIST: list = STRINGS.get("VERIFY_RANDOM_EMOJI_LIST")
 if VERIFY_RANDOM_EMOJI_LIST is None:
     raise Exception("List VERIFY_RANDOM_EMOJI_LIST is missing!")

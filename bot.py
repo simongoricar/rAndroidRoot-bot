@@ -14,9 +14,9 @@ from androidroot.config import BOT_TOKEN, GUILD_ID, \
     AUTH_TRIGGER_CHANNEL_ID, AUTH_TRIGGER_MESSAGE_ID, AUTH_TRIGGER_EMOJI,\
     AUTH_CHANNEL_CATEGORY_ID, AUTH_SUCCESS_ROLE_ID
 from androidroot.strings import STR_ON_MEMBER_JOIN, ON_VERIFICATION_BEGIN, \
-    VERIFICATION_HOW, VERIFY_NOT_BOT_TEXT_LIST, VERIFY_RANDOM_EMOJI_LIST,\
+    VERIFICATION_HOW, VERIFY_RANDOM_EMOJI_LIST,\
     VERIFY_FAILED_TIMEOUT, VERIFY_SUCCESS, BOT_ABOUT
-from androidroot.utilities import generate_id
+from androidroot.utilities import generate_id, generate_code
 
 __version__ = "0.1.0"
 
@@ -124,13 +124,13 @@ async def begin_verification(member: Member):
         reason=f"Authenticating user {member.id}#{member.discriminator}"
     )
 
-    random_not_bot_text = choice(VERIFY_NOT_BOT_TEXT_LIST)
-    random_emoji = choice(VERIFY_RANDOM_EMOJI_LIST)
+    random_code = generate_code(4)
+    random_emoji_text, random_emoji_unicode = choice(VERIFY_RANDOM_EMOJI_LIST)
 
     await auth_channel.send(ON_VERIFICATION_BEGIN.format(user_mention=member.mention))
     await auth_channel.send(VERIFICATION_HOW.format(
-        not_bot_text=random_not_bot_text,
-        random_emoji=random_emoji,
+        code=random_code,
+        random_emoji=random_emoji_text.strip(":"),
     ))
 
     try:
@@ -140,9 +140,11 @@ async def begin_verification(member: Member):
             if message.channel.id != auth_channel.id:
                 return False
 
-            if random_not_bot_text.lower() not in str(message.content).lower():
+            content = str(message.content).strip().lower()
+            # Should begin with the code and end with the emoji
+            if not content.startswith(random_code.lower()):
                 return False
-            if random_emoji not in str(message.content):
+            if not content.endswith(random_emoji_unicode):
                 return False
 
             return True
@@ -206,6 +208,7 @@ async def on_member_join(member: Member):
 
 @bot.listen()
 async def on_raw_reaction_add(payload: RawReactionActionEvent):
+    # Ignore all "official" bots
     if payload.member.bot:
         return
 
@@ -232,6 +235,15 @@ async def on_raw_reaction_add(payload: RawReactionActionEvent):
 #############
 # Bot commands
 #############
+@bot.command(name="removerole")
+async def cmd_removerole(ctx: Context):
+    success_role = await get_auth_success_role()
+    author: Member = ctx.author
+
+    await author.remove_roles(success_role)
+    await ctx.message.add_reaction("✅")
+
+
 @bot.command(name="ping")
 async def cmd_ping(ctx: Context):
     await ctx.send("Pong! :ping_pong:")

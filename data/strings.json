@@ -2,19 +2,13 @@
   "BOT_ABOUT": "Hi, I'm {bot_mention}!\n\nI'm here to ensure you're a human when you join :smiley:.\nCurrent version: `{bot_version}`",
   "ON_MEMBER_JOIN": "Welcome to the server {user_mention}! To begin, get yourself verified in {channel_mention}!",
   "ON_VERIFICATION_BEGIN": "Hi {user_mention}, we need to verify you're actually a human!",
-  "VERIFICATION_HOW": "To authenticate yourself, please respond with \"{not_bot_text}\", followed by the emoji {random_emoji}.",
-  "VERIFY_NOT_BOT_TEXT_LIST": [
-    "I am not a bot",
-    "Nope, not a bot",
-    "I am a human",
-    "Hi, human here"
-  ],
+  "VERIFICATION_HOW": "To authenticate yourself, please respond with the code *\"{code}\"*, followed by the emoji named `{random_emoji}` in the same message.",
   "VERIFY_RANDOM_EMOJI_LIST": [
     // Use https://www.compart.com/en/unicode or something similar when adding new emojis,
-    "\uD83C\uDF83", // :jack_o_lantern:,
-    "\uD83E\uDD16", // :robot:,
-    "\uD83E\uDDE0", // :brain:,
-    "\uD83D\uDC7B"  // :ghost:
+    [":jack_o_lantern:", "\uD83C\uDF83"],
+    [":robot:", "\uD83E\uDD16"],
+    [":brain:", "\uD83E\uDDE0"],
+    [":ghost:", "\uD83D\uDC7B"]
   ],
   "VERIFY_FAILED_TIMEOUT": "You took too long to authenticate, please try again.",
   "VERIFY_SUCCESS": "Thank you for your patience {user_mention}, you now have access to the full server."
