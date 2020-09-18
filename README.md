@@ -1,5 +1,7 @@
 # rAndroidRoot-bot
 ![](https://img.shields.io/badge/python-3.8%2B-blue)
+![Docker Build Status](https://img.shields.io/docker/build/defaltsimon/androidrootbot)
+![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/defaltsimon/androidrootbot)
 
 Discord bot for the r/AndroidRoot discord server
 
@@ -17,3 +19,5 @@ If you want you can also customize the bot responses in `data/strings.json`, but
 ## 3. Running
 If you have completed the steps above, it's time to start the bot. Run either `poetry run python bot.py` or the provided shell scripts. 
 I personally use [screen](https://linux.die.net/man/1/screen) to manage my bot (something like `screen -dmS AndroidRootBot poetry run python bot.py`), but that's not a requirement.
+
+P.S. There is also a [docker-compose.yml](https://devhints.io/docker-compose) if you prefer using Docker.
