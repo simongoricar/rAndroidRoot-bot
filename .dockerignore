@@ -1,6 +1,7 @@
 .idea
 __pycache__
 scripts
+data/config.ini
 
 docker-compose.yml
 Dockerfile
