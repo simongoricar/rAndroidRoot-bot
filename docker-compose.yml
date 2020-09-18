@@ -1,0 +1,9 @@
+version: "3"
+services:
+  androidrootbot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: defaltsimon/androidrootbot:latest
+    volumes:
+    - "./data:/home/bot/data"
