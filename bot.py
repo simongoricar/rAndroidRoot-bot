@@ -165,6 +165,10 @@ async def begin_verification(member: Member):
         await member.send(VERIFY_SUCCESS.format(user_mention=member.mention))
         await auth_channel.delete(reason=f"Verification for {member.name}#{member.discriminator} ({member.id}) "
                                          f"finished")
+    finally:
+        # Remove the reaction on the main message
+        trigger_messsage = await get_auth_trigger_message()
+        await trigger_messsage.remove_reaction(AUTH_TRIGGER_EMOJI, member)
 
 
 #############
