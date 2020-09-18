@@ -1,9 +1,10 @@
 version: "3"
 services:
   androidrootbot:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    # Enable when manually building, otherwise use the Docker Hub image.
+    #build:
+    #  context: .
+    #  dockerfile: Dockerfile
     image: defaltsimon/androidrootbot:latest
     volumes:
     - "./data:/home/bot/data"
