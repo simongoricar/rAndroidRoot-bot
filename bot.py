@@ -241,7 +241,7 @@ async def on_raw_reaction_add(payload: RawReactionActionEvent):
 # Dangerous commands
 #############
 @check(is_server_owner)
-@bot.command(name="verifyall", brief="Give every member the verified role")
+@bot.command(name="verifyall", brief="Give every member the verified role (owner only)")
 async def cmd_verifyall(ctx: Context):
     verified_role = await get_verified_role()
 
