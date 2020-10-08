@@ -1,6 +1,6 @@
 # rAndroidRoot-bot
 ![](https://img.shields.io/badge/python-3.8%2B-blue)
-![Docker Build Status](https://img.shields.io/docker/build/defaltsimon/androidrootbot)
+![Docker Build Status](https://img.shields.io/docker/cloud/build/defaltsimon/androidrootbot)
 ![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/defaltsimon/androidrootbot)
 
 Discord bot for the r/AndroidRoot discord server
