@@ -1,5 +1,5 @@
 {
-  "BOT_ABOUT": "Hi, I'm {bot_mention}!\n\nI'm here to ensure you're a human when you join :smiley:.\nCurrent version: `{bot_version}`",
+  "BOT_ABOUT": "Hi, I'm {bot_mention}!\n\nI'm here to ensure you're a human when you join :smiley:.\nMade with love by DefaultSimon.\n\nCurrent version: `{bot_version}`",
   "ON_MEMBER_JOIN": "Welcome to the server {user_mention}! To begin, get yourself verified in {channel_mention}!",
   "ON_VERIFICATION_BEGIN": "Hi {user_mention}, we need to verify you're actually a human!",
   "VERIFICATION_HOW": "To authenticate yourself, please respond with the code *\"{code}\"*, followed by the emoji named `{random_emoji}` in the same message.",
