@@ -6,7 +6,7 @@ from random import choice
 from asyncio import TimeoutError
 
 from discord import Member, Guild, TextChannel, Message, PermissionOverwrite, Role, CategoryChannel, Reaction
-from discord.ext.commands import Bot, Context, check, CheckFailure
+from discord.ext.commands import Bot, Context, check_any, CheckFailure
 from discord import RawReactionActionEvent
 from discord.errors import HTTPException
 
@@ -16,7 +16,7 @@ from androidroot.config import BOT_TOKEN, BOT_PREFIX, GUILD_ID, \
     VERIFICATION_CHANNEL_CATEGORY_ID, VERIFICATION_SUCCESS_ROLE_ID
 from androidroot.strings import gets, String
 from androidroot.utilities import generate_id, generate_code
-from androidroot.checks import is_server_owner
+from androidroot.checks import is_server_owner, is_special_user, decorate_check
 from androidroot.emoji import StandardEmoji, UnicodeEmoji
 
 __version__ = "0.2.0"
@@ -240,7 +240,7 @@ async def on_raw_reaction_add(payload: RawReactionActionEvent):
 #############
 # Dangerous commands
 #############
-@check(is_server_owner)
+@check_any(decorate_check(is_server_owner), decorate_check(is_special_user))
 @bot.command(name="verifyall", brief="Give every member the verified role (owner only)")
 async def cmd_verifyall(ctx: Context):
     verified_role = await get_verified_role()

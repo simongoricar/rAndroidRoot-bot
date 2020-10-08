@@ -1,5 +1,10 @@
 import configparser
+import logging
 import codecs
+
+from json import loads
+
+log = logging.getLogger(__name__)
 
 CONFIG_FILE = "./data/config.ini"
 
@@ -7,13 +12,16 @@ config = configparser.ConfigParser()
 config.read_file(codecs.open(CONFIG_FILE, "r", "utf-8"))
 
 #######
-# Auth
+# Bot
 #######
 BOT_TOKEN = config.get("Bot", "bot_token", fallback=None)
 if not BOT_TOKEN:
     raise Exception("'bot_token' is missing!")
 
 BOT_PREFIX = config.get("Bot", "bot_prefix", fallback="!").strip(" ")
+SPECIAL_USERS_IDS = [int(id_) for id_ in loads(config.get("Bot", "special_user_ids", fallback="[]"))]
+
+log.info(f"Special users: {', '.join([str(a) for a in SPECIAL_USERS_IDS])}")
 
 #######
 # ServerConfiguration
