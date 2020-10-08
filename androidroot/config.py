@@ -13,6 +13,8 @@ BOT_TOKEN = config.get("Bot", "bot_token", fallback=None)
 if not BOT_TOKEN:
     raise Exception("'bot_token' is missing!")
 
+BOT_PREFIX = config.get("Bot", "bot_prefix", fallback="!").strip(" ")
+
 #######
 # ServerConfiguration
 #######

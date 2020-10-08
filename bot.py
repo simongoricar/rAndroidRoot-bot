@@ -11,7 +11,7 @@ from discord import RawReactionActionEvent
 from discord.errors import HTTPException
 
 from androidroot.state import state
-from androidroot.config import BOT_TOKEN, GUILD_ID, \
+from androidroot.config import BOT_TOKEN, BOT_PREFIX, GUILD_ID, \
     VERIFICATION_TRIGGER_CHANNEL_ID, VERIFICATION_TRIGGER_MESSAGE_ID, VERIFICATION_TRIGGER_EMOJI, \
     VERIFICATION_CHANNEL_CATEGORY_ID, VERIFICATION_SUCCESS_ROLE_ID
 from androidroot.strings import gets, String
@@ -23,7 +23,7 @@ __version__ = "0.1.0"
 
 log = logging.getLogger(__name__)
 bot = Bot(
-    command_prefix="!"
+    command_prefix=BOT_PREFIX
 )
 
 
@@ -241,7 +241,7 @@ async def on_raw_reaction_add(payload: RawReactionActionEvent):
 # Dangerous commands
 #############
 @check(is_server_owner)
-@bot.command(name="verifyall")
+@bot.command(name="verifyall", brief="Give every member the verified role")
 async def cmd_verifyall(ctx: Context):
     verified_role = await get_verified_role()
 
@@ -303,7 +303,7 @@ async def cmd_verifyall_error(ctx: Context, _: CheckFailure):
 #############
 # Normal commands
 #############
-@bot.command(name="verify")
+@bot.command(name="verify", brief="Verify yourself if you haven't already")
 async def cmd_verify(ctx: Context):
     verified_role = await get_verified_role()
 
@@ -314,7 +314,7 @@ async def cmd_verify(ctx: Context):
         await begin_verification(ctx.author)
 
 
-@bot.command(name="unverify")
+@bot.command(name="unverify", brief="Remove the verified role from yourself")
 async def cmd_removerole(ctx: Context):
     success_role = await get_verified_role()
     author: Member = ctx.author
@@ -323,12 +323,12 @@ async def cmd_removerole(ctx: Context):
     await ctx.message.add_reaction("✅")
 
 
-@bot.command(name="ping")
+@bot.command(name="ping", brief="The bot responds if alive")
 async def cmd_ping(ctx: Context):
     await ctx.send("Pong! :ping_pong:")
 
 
-@bot.command(name="about")
+@bot.command(name="about", brief="A bit about the bot")
 async def cmd_about(ctx: Context):
     await ctx.send(gets(String.BOT_ABOUT).format(bot_mention=bot.user.mention, bot_version=__version__))
 
