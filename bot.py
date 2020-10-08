@@ -5,18 +5,19 @@ from typing import Optional
 from random import choice
 from asyncio import TimeoutError
 
-from discord import Member, Guild, TextChannel, Message, PermissionOverwrite, Role, CategoryChannel
-from discord.ext.commands import Bot, Context
+from discord import Member, Guild, TextChannel, Message, PermissionOverwrite, Role, CategoryChannel, Reaction
+from discord.ext.commands import Bot, Context, check, CheckFailure
 from discord import RawReactionActionEvent
+from discord.errors import HTTPException
 
 from androidroot.state import state
 from androidroot.config import BOT_TOKEN, GUILD_ID, \
-    AUTH_TRIGGER_CHANNEL_ID, AUTH_TRIGGER_MESSAGE_ID, AUTH_TRIGGER_EMOJI,\
-    AUTH_CHANNEL_CATEGORY_ID, AUTH_SUCCESS_ROLE_ID
-from androidroot.strings import STR_ON_MEMBER_JOIN, ON_VERIFICATION_BEGIN, \
-    VERIFICATION_HOW, VERIFY_RANDOM_EMOJI_LIST,\
-    VERIFY_FAILED_TIMEOUT, VERIFY_SUCCESS, BOT_ABOUT
+    VERIFICATION_TRIGGER_CHANNEL_ID, VERIFICATION_TRIGGER_MESSAGE_ID, VERIFICATION_TRIGGER_EMOJI, \
+    VERIFICATION_CHANNEL_CATEGORY_ID, VERIFICATION_SUCCESS_ROLE_ID
+from androidroot.strings import gets, String
 from androidroot.utilities import generate_id, generate_code
+from androidroot.checks import is_server_owner
+from androidroot.emoji import StandardEmoji, UnicodeEmoji
 
 __version__ = "0.1.0"
 
@@ -45,42 +46,42 @@ async def get_main_guild() -> Guild:
         return stored
 
 
-async def get_auth_channel() -> TextChannel:
+async def get_verify_trigger_channel() -> TextChannel:
     """
     :return: Verification TextChannel
     """
     stored: Optional[TextChannel] = state.get("auth_channel")
 
     if stored is None:
-        auth_channel = (await get_main_guild()).get_channel(AUTH_TRIGGER_CHANNEL_ID)
+        auth_channel = (await get_main_guild()).get_channel(VERIFICATION_TRIGGER_CHANNEL_ID)
         state.set("auth_channel", auth_channel)
         return auth_channel
     else:
         return stored
 
 
-async def get_auth_trigger_message() -> Message:
+async def get_verify_trigger_message() -> Message:
     """
     :return: Verification trigger Message
     """
     stored: Optional[Message] = state.get("auth_trigger_message")
 
     if stored is None:
-        trigger_message = await (await get_auth_channel()).fetch_message(AUTH_TRIGGER_MESSAGE_ID)
+        trigger_message = await (await get_verify_trigger_channel()).fetch_message(VERIFICATION_TRIGGER_MESSAGE_ID)
         state.set("auth_trigger_message", trigger_message)
         return trigger_message
     else:
         return stored
 
 
-async def get_auth_success_role() -> Role:
+async def get_verified_role() -> Role:
     """
     :return: Role to add when successfully authenticated.
     """
     stored: Optional[Role] = state.get("auth_success_role")
 
     if stored is None:
-        success_role = (await get_main_guild()).get_role(AUTH_SUCCESS_ROLE_ID)
+        success_role = (await get_main_guild()).get_role(VERIFICATION_SUCCESS_ROLE_ID)
         state.set("auth_success_role", success_role)
         return success_role
     else:
@@ -107,9 +108,9 @@ async def begin_verification(member: Member):
     channel_name = f"verification-{generate_id(4)}"
 
     # Find the correct category
-    category = find_category_by_id(main_guild, AUTH_CHANNEL_CATEGORY_ID)
+    category = find_category_by_id(main_guild, VERIFICATION_CHANNEL_CATEGORY_ID)
     if not category:
-        raise Exception(f"Could not find category with ID {AUTH_CHANNEL_CATEGORY_ID}")
+        raise Exception(f"Could not find category with ID {VERIFICATION_CHANNEL_CATEGORY_ID}")
 
     permission_overwrites = {
         main_guild.me: PermissionOverwrite(read_messages=True, send_messages=True, read_message_history=True),
@@ -125,10 +126,10 @@ async def begin_verification(member: Member):
     )
 
     random_code = generate_code(4)
-    random_emoji_text, random_emoji_unicode = choice(VERIFY_RANDOM_EMOJI_LIST)
+    random_emoji_text, random_emoji_unicode = choice(gets(String.VERIFY_RANDOM_EMOJI_LIST))
 
-    await auth_channel.send(ON_VERIFICATION_BEGIN.format(user_mention=member.mention))
-    await auth_channel.send(VERIFICATION_HOW.format(
+    await auth_channel.send(gets(String.ON_VERIFICATION_BEGIN).format(user_mention=member.mention))
+    await auth_channel.send(gets(String.VERIFICATION_HOW).format(
         code=random_code,
         random_emoji=random_emoji_text.strip(":"),
     ))
@@ -152,23 +153,23 @@ async def begin_verification(member: Member):
         response: Message = await bot.wait_for("message", check=is_correct_response, timeout=120)
     except TimeoutError:
         # Tell the user they were too slow and delete the verification channel
-        await member.send(VERIFY_FAILED_TIMEOUT)
+        await member.send(gets(String.VERIFY_FAILED_TIMEOUT))
         await auth_channel.delete(reason=f"Verification for {member.name}#{member.discriminator} ({member.id}) "
                                          f"failed: timeout")
     else:
         await response.add_reaction("✅")
 
         # Assign the full member role
-        full_role = await get_auth_success_role()
+        full_role = await get_verified_role()
         await member.add_roles(full_role, reason=f"Verification finished")
 
-        await member.send(VERIFY_SUCCESS.format(user_mention=member.mention))
+        await member.send(gets(String.VERIFY_SUCCESS).format(user_mention=member.mention))
         await auth_channel.delete(reason=f"Verification for {member.name}#{member.discriminator} ({member.id}) "
                                          f"finished")
     finally:
         # Remove the reaction on the main message
-        trigger_messsage = await get_auth_trigger_message()
-        await trigger_messsage.remove_reaction(AUTH_TRIGGER_EMOJI, member)
+        trigger_messsage = await get_verify_trigger_message()
+        await trigger_messsage.remove_reaction(VERIFICATION_TRIGGER_EMOJI, member)
 
 
 #############
@@ -182,9 +183,9 @@ async def on_ready():
     await bot.wait_until_ready()
 
     # Delete all stale verification channels on start
-    auth_category = find_category_by_id(await get_main_guild(), AUTH_CHANNEL_CATEGORY_ID)
+    auth_category = find_category_by_id(await get_main_guild(), VERIFICATION_CHANNEL_CATEGORY_ID)
     if not auth_category:
-        raise Exception(f"Could not find category with ID {AUTH_CHANNEL_CATEGORY_ID}")
+        raise Exception(f"Could not find category with ID {VERIFICATION_CHANNEL_CATEGORY_ID}")
 
     for ch in auth_category.text_channels:
         # Make sure they match verification-<4digits>
@@ -197,16 +198,16 @@ async def on_ready():
         await ch.delete(reason="Cleaning stale verification channels on start.")
 
     # Puts up the first reaction on the trigger message
-    trigger_message = await get_auth_trigger_message()
-    await trigger_message.add_reaction(AUTH_TRIGGER_EMOJI)
+    trigger_message = await get_verify_trigger_message()
+    await trigger_message.add_reaction(VERIFICATION_TRIGGER_EMOJI)
 
 
 @bot.listen()
 async def on_member_join(member: Member):
     # Send a DM instructing the member to get verified
-    auth_channel = await get_auth_channel()
+    auth_channel = await get_verify_trigger_channel()
 
-    formatted = STR_ON_MEMBER_JOIN.format(user_mention=member.mention, channel_mention=auth_channel.mention)
+    formatted = gets(String.ON_MEMBER_JOIN).format(user_mention=member.mention, channel_mention=auth_channel.mention)
     await member.send(formatted)
 
 
@@ -217,15 +218,15 @@ async def on_raw_reaction_add(payload: RawReactionActionEvent):
         return
 
     # Check if it matches with the correct message
-    if payload.message_id != AUTH_TRIGGER_MESSAGE_ID:
+    if payload.message_id != VERIFICATION_TRIGGER_MESSAGE_ID:
         return
 
     # Check if the emoji is correct
-    if str(payload.emoji) != AUTH_TRIGGER_EMOJI:
+    if str(payload.emoji) != VERIFICATION_TRIGGER_EMOJI:
         return
 
     # Check if user is already authenticated
-    full_role = await get_auth_success_role()
+    full_role = await get_verified_role()
     if full_role in payload.member.roles:
         log.debug(f"User {payload.member.name}#{payload.member.discriminator} "
                   f"is already authenticated, ignoring reaction.")
@@ -237,11 +238,85 @@ async def on_raw_reaction_add(payload: RawReactionActionEvent):
 
 
 #############
-# Bot commands
+# Dangerous commands
 #############
-@bot.command(name="removerole")
+@check(is_server_owner)
+@bot.command(name="verifyall")
+async def cmd_verifyall(ctx: Context):
+    verified_role = await get_verified_role()
+
+    msg = await ctx.send(gets(String.VERIFYALL_CONFIRMATION).format(verified_role_name=verified_role.name, emoji=StandardEmoji.OK))
+    await msg.add_reaction(UnicodeEmoji.OK)
+
+    try:
+        def is_confirmation(reaction: Reaction, member: Member):
+            if reaction.message.id != msg.id:
+                return False
+
+            if member.id != member.guild.owner.id:
+                return False
+
+            if reaction.emoji != UnicodeEmoji.OK:
+                return False
+
+            return True
+
+        _reaction, _user = await bot.wait_for("reaction_add", timeout=30, check=is_confirmation)
+    except TimeoutError:
+        await ctx.send(gets(String.VERIFYALL_TIMEOUT))
+    else:
+        VERIFYALL_STARTING = gets(String.VERIFYALL_STARTING)
+        VERIFYALL_PROGRESS = gets(String.VERIFYALL_PROGRESS)
+        VERIFYALL_DONE = gets(String.VERIFYALL_DONE)
+
+        progress = await ctx.send(
+            VERIFYALL_STARTING + VERIFYALL_PROGRESS.format(current=0, total=ctx.guild.member_count)
+        )
+
+        count = 0
+        errored = 0
+        async for member in ctx.guild.fetch_members(limit=None):
+            try:
+                await member.add_roles(verified_role, reason="!verifyall")
+            except HTTPException:
+                errored += 1
+            else:
+                count += 1
+
+            if count % 10 == 0:
+                await progress.edit(
+                    content=VERIFYALL_STARTING + VERIFYALL_PROGRESS.format(current=count, total=ctx.guild.member_count)
+                )
+
+        await progress.edit(
+            content=VERIFYALL_STARTING + VERIFYALL_DONE.format(
+                verified_role_name=verified_role.name, total_done=count, total_errored=errored
+            )
+        )
+
+
+@cmd_verifyall.error
+async def cmd_verifyall_error(ctx: Context, _: CheckFailure):
+    await ctx.send(gets(String.CMD_NOT_ALLOWED_FOR_USER))
+
+
+#############
+# Normal commands
+#############
+@bot.command(name="verify")
+async def cmd_verify(ctx: Context):
+    verified_role = await get_verified_role()
+
+    if verified_role in ctx.author.roles:
+        await ctx.send(gets(String.MANUAL_VERIFICATION_NO_NEED).format(user_mention=ctx.author.mention))
+    else:
+        await ctx.send(gets(String.MANUAL_VERIFICATION).format(user_mention=ctx.author.mention))
+        await begin_verification(ctx.author)
+
+
+@bot.command(name="unverify")
 async def cmd_removerole(ctx: Context):
-    success_role = await get_auth_success_role()
+    success_role = await get_verified_role()
     author: Member = ctx.author
 
     await author.remove_roles(success_role)
@@ -255,7 +330,7 @@ async def cmd_ping(ctx: Context):
 
 @bot.command(name="about")
 async def cmd_about(ctx: Context):
-    await ctx.send(BOT_ABOUT.format(bot_mention=bot.user.mention, bot_version=__version__))
+    await ctx.send(gets(String.BOT_ABOUT).format(bot_mention=bot.user.mention, bot_version=__version__))
 
 # Run everything
 bot.run(BOT_TOKEN)

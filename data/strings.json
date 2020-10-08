@@ -11,5 +11,13 @@
     [":ghost:", "\uD83D\uDC7B"]
   ],
   "VERIFY_FAILED_TIMEOUT": "You took too long to authenticate, please try again.",
-  "VERIFY_SUCCESS": "Thank you for your patience {user_mention}, you now have access to the full server."
+  "VERIFY_SUCCESS": "Thank you for your patience {user_mention}, you now have access to the full server.",
+  "VERIFYALL_CONFIRMATION": "**This will give everyone in the current server the verified role** (\"{verified_role_name}\")! The process might take a bit.\nReact with {emoji} to confirm.",
+  "VERIFYALL_TIMEOUT": ":bellhop: You ran out of time, run the command again if you want to continue.",
+  "VERIFYALL_STARTING": ":tools: **Now adding the verified role to every member.**",
+  "VERIFYALL_PROGRESS": "\n\n*Progress* `{current} / {total}`",
+  "VERIFYALL_DONE": "\n\n:ballot_box_with_check: Done, added the role \"*{verified_role_name}*\" to {total_done} members! ({total_errored} errors)",
+  "CMD_NOT_ALLOWED_FOR_USER": ":exclamation: You are not allowed to use this command.",
+  "MANUAL_VERIFICATION": ":mailbox_with_mail: Thank you for verifying {user_mention}, check out the channel you've been just mentioned in!",
+  "MANUAL_VERIFICATION_NO_NEED": ":mailbox_with_no_mail: Thank you {user_mention}, but you are already verified."
 }

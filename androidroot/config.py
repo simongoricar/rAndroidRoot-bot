@@ -17,9 +17,9 @@ if not BOT_TOKEN:
 # ServerConfiguration
 #######
 GUILD_ID: int = config.getint("TriggerConfig", "guild_id")
-AUTH_TRIGGER_CHANNEL_ID: int = config.getint("TriggerConfig", "verification_trigger_channel_id")
-AUTH_TRIGGER_MESSAGE_ID: int = config.getint("TriggerConfig", "verification_trigger_message_id")
-AUTH_TRIGGER_EMOJI: str = config.get("TriggerConfig", "verification_trigger_emoji")
+VERIFICATION_TRIGGER_CHANNEL_ID: int = config.getint("TriggerConfig", "verification_trigger_channel_id")
+VERIFICATION_TRIGGER_MESSAGE_ID: int = config.getint("TriggerConfig", "verification_trigger_message_id")
+VERIFICATION_TRIGGER_EMOJI: str = config.get("TriggerConfig", "verification_trigger_emoji")
 
-AUTH_CHANNEL_CATEGORY_ID: int = config.getint("AuthConfig", "verification_channel_category_id")
-AUTH_SUCCESS_ROLE_ID: int = config.getint("AuthConfig", "verification_success_role_id")
+VERIFICATION_CHANNEL_CATEGORY_ID: int = config.getint("AuthConfig", "verification_channel_category_id")
+VERIFICATION_SUCCESS_ROLE_ID: int = config.getint("AuthConfig", "verification_success_role_id")

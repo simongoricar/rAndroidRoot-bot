@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 
 log = logging.getLogger(__name__)
 
@@ -12,30 +13,50 @@ except ImportError:
 with open("./data/strings.json", "r") as strings_:
     STRINGS = loads(strings_.read())
 
-BOT_ABOUT: str = STRINGS.get("BOT_ABOUT")
-if BOT_ABOUT is None:
-    raise Exception("String BOT_ABOUT is missing!")
+REQUIRED_STRING_LIST = [
+    "BOT_ABOUT",
+    "ON_MEMBER_JOIN",
+    "ON_VERIFICATION_BEGIN",
+    "VERIFICATION_HOW",
+    "VERIFY_RANDOM_EMOJI_LIST",
+    "VERIFY_FAILED_TIMEOUT",
+    "VERIFY_SUCCESS",
+    "VERIFYALL_CONFIRMATION",
+    "VERIFYALL_TIMEOUT",
+    "VERIFYALL_STARTING",
+    "VERIFYALL_PROGRESS",
+    "VERIFYALL_DONE",
+    "CMD_NOT_ALLOWED_FOR_USER",
+    "MANUAL_VERIFICATION",
+    "MANUAL_VERIFICATION_NO_NEED",
+]
 
-STR_ON_MEMBER_JOIN: str = STRINGS.get("ON_MEMBER_JOIN")
-if STR_ON_MEMBER_JOIN is None:
-    raise Exception("String ON_MEMBER_JOIN is missing!")
+# Make sure all required strings are present
+for s in REQUIRED_STRING_LIST:
+    if STRINGS.get(s) is None:
+        raise Exception(f"String {s} is required, but missing!")
 
-ON_VERIFICATION_BEGIN: str = STRINGS.get("ON_VERIFICATION_BEGIN")
-if ON_VERIFICATION_BEGIN is None:
-    raise Exception("String ON_VERIFICATION_BEGIN is missing!")
 
-VERIFICATION_HOW: str = STRINGS.get("VERIFICATION_HOW")
-if VERIFICATION_HOW is None:
-    raise Exception("String VERIFICATION_HOW is missing!")
+class String:
+    """
+    Contains all known string keys.
+    """
+    BOT_ABOUT = "BOT_ABOUT"
+    ON_MEMBER_JOIN = "ON_MEMBER_JOIN"
+    ON_VERIFICATION_BEGIN = "ON_VERIFICATION_BEGIN"
+    VERIFICATION_HOW = "VERIFICATION_HOW"
+    VERIFY_RANDOM_EMOJI_LIST = "VERIFY_RANDOM_EMOJI_LIST"
+    VERIFY_FAILED_TIMEOUT = "VERIFY_FAILED_TIMEOUT"
+    VERIFY_SUCCESS = "VERIFY_SUCCESS"
+    VERIFYALL_CONFIRMATION = "VERIFYALL_CONFIRMATION"
+    VERIFYALL_TIMEOUT = "VERIFYALL_TIMEOUT"
+    VERIFYALL_STARTING = "VERIFYALL_STARTING"
+    VERIFYALL_PROGRESS = "VERIFYALL_PROGRESS"
+    VERIFYALL_DONE = "VERIFYALL_DONE"
+    CMD_NOT_ALLOWED_FOR_USER = "CMD_NOT_ALLOWED_FOR_USER"
+    MANUAL_VERIFICATION = "MANUAL_VERIFICATION"
+    MANUAL_VERIFICATION_NO_NEED = "MANUAL_VERIFICATION_NO_NEED"
 
-VERIFY_RANDOM_EMOJI_LIST: list = STRINGS.get("VERIFY_RANDOM_EMOJI_LIST")
-if VERIFY_RANDOM_EMOJI_LIST is None:
-    raise Exception("List VERIFY_RANDOM_EMOJI_LIST is missing!")
 
-VERIFY_FAILED_TIMEOUT: str = STRINGS.get("VERIFY_FAILED_TIMEOUT")
-if VERIFY_FAILED_TIMEOUT is None:
-    raise Exception("String VERIFY_FAILED_TIMEOUT is missing!")
-
-VERIFY_SUCCESS: str = STRINGS.get("VERIFY_SUCCESS")
-if VERIFY_SUCCESS is None:
-    raise Exception("String VERIFY_SUCCESS is missing!")
+def gets(string_name: str) -> Optional[str]:
+    return STRINGS.get(string_name)
