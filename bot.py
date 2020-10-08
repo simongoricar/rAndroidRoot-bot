@@ -19,7 +19,7 @@ from androidroot.utilities import generate_id, generate_code
 from androidroot.checks import is_server_owner
 from androidroot.emoji import StandardEmoji, UnicodeEmoji
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 log = logging.getLogger(__name__)
 bot = Bot(
