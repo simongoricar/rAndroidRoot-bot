@@ -10,7 +10,7 @@
     [":brain:", "\uD83E\uDDE0"],
     [":ghost:", "\uD83D\uDC7B"]
   ],
-  "VERIFY_FAILED_TIMEOUT": "You took too long to authenticate, please try again.",
+  "VERIFY_FAILED_TIMEOUT": "You took too long to verify, please try again.",
   "VERIFY_SUCCESS": "Thank you for your patience {user_mention}, you now have access to the full server.",
   "VERIFYALL_CONFIRMATION": "**This will give everyone in the current server the verified role** (\"{verified_role_name}\")! The process might take a bit.\nReact with {emoji} to confirm.",
   "VERIFYALL_TIMEOUT": ":bellhop: You ran out of time, run the command again if you want to continue.",

@@ -4,8 +4,10 @@ logging.basicConfig(level=logging.INFO)
 from typing import Optional
 from random import choice
 from asyncio import TimeoutError
+from datetime import datetime
 
-from discord import Member, Guild, TextChannel, Message, PermissionOverwrite, Role, CategoryChannel, Reaction
+from discord import Member, Guild, TextChannel, Message, PermissionOverwrite, Role, \
+    CategoryChannel, Reaction, Embed, Color
 from discord.ext.commands import Bot, Context, check_any, CheckFailure
 from discord import RawReactionActionEvent
 from discord.errors import HTTPException
@@ -13,7 +15,8 @@ from discord.errors import HTTPException
 from androidroot.state import state
 from androidroot.config import BOT_TOKEN, BOT_PREFIX, GUILD_ID, \
     VERIFICATION_TRIGGER_CHANNEL_ID, VERIFICATION_TRIGGER_MESSAGE_ID, VERIFICATION_TRIGGER_EMOJI, \
-    VERIFICATION_CHANNEL_CATEGORY_ID, VERIFICATION_SUCCESS_ROLE_ID
+    VERIFICATION_CHANNEL_CATEGORY_ID, VERIFICATION_SUCCESS_ROLE_ID, \
+    LOG_VERIFICATIONS_CONSOLE, LOG_VERIFICATIONS_CHANNEL
 from androidroot.strings import gets, String
 from androidroot.utilities import generate_id, generate_code
 from androidroot.checks import is_server_owner, is_special_user, decorate_check
@@ -88,6 +91,24 @@ async def get_verified_role() -> Role:
         return stored
 
 
+# TODO use decorators for caching instead of doing it manually in each function
+async def get_logging_channel() -> Optional[TextChannel]:
+    """
+    :return: Verification logging channel
+    """
+    if LOG_VERIFICATIONS_CHANNEL is None:
+        return None
+
+    stored: Optional[TextChannel] = state.get("verification_logging_channel")
+
+    if stored is None:
+        logging_channel = (await get_main_guild()).get_channel(LOG_VERIFICATIONS_CHANNEL)
+        state.set("verification_logging_channel", logging_channel)
+        return logging_channel
+    else:
+        return stored
+
+
 def find_category_by_id(guild: Guild, category_id: int) -> Optional[CategoryChannel]:
     category = None
     for c in guild.categories:
@@ -134,18 +155,25 @@ async def begin_verification(member: Member):
         random_emoji=random_emoji_text.strip(":"),
     ))
 
+    responses = []
+    embed = None
+
     try:
+        failed_tries = 0
+
         def is_correct_response(message: Message):
             if message.author.id != member.id:
                 return False
             if message.channel.id != auth_channel.id:
                 return False
 
+            responses.append(message)
+
             content = str(message.content).strip().lower()
             # Should begin with the code and end with the emoji
-            if not content.startswith(random_code.lower()):
+            if random_code.lower() not in content:
                 return False
-            if not content.endswith(random_emoji_unicode):
+            if random_emoji_unicode not in content:
                 return False
 
             return True
@@ -156,6 +184,33 @@ async def begin_verification(member: Member):
         await member.send(gets(String.VERIFY_FAILED_TIMEOUT))
         await auth_channel.delete(reason=f"Verification for {member.name}#{member.discriminator} ({member.id}) "
                                          f"failed: timeout")
+
+        if len(responses) == 0:
+            if LOG_VERIFICATIONS_CONSOLE:
+                log.info(f"Member failed to verify (timeout): {member.name}#{member.discriminator} ({member.id}), "
+                         f"no responses")
+
+            embed = Embed(
+                title="User failed to verify (timeout)",
+                description="*No response*", color=Color.dark_red(),
+                timestamp=datetime.now()
+            )
+        else:
+            last_message = responses[-1]
+
+            trimmed = last_message.clean_content
+            if len(trimmed) > 1000:
+                trimmed = f"{trimmed[:1000]}[...]"
+
+            if LOG_VERIFICATIONS_CONSOLE:
+                log.info(f"Member not verified (timeout): {member.name}#{member.discriminator} ({member.id}), "
+                         f"last response '{trimmed}'")
+
+            embed = Embed(
+                title="Member failed to verify (timeout)",
+                description=f"Last response:\n```{trimmed}```", color=Color.red(),
+                timestamp=datetime.now()
+            )
     else:
         await response.add_reaction("✅")
 
@@ -166,10 +221,33 @@ async def begin_verification(member: Member):
         await member.send(gets(String.VERIFY_SUCCESS).format(user_mention=member.mention))
         await auth_channel.delete(reason=f"Verification for {member.name}#{member.discriminator} ({member.id}) "
                                          f"finished")
+
+        trimmed = response.clean_content
+        if len(trimmed) > 1000:
+            trimmed = f"{trimmed[:1000]}[...]"
+
+        if LOG_VERIFICATIONS_CONSOLE:
+            log.info(f"Member verified: {member.name}#{member.discriminator} ({member.id}) with message '{trimmed}'")
+
+        embed = Embed(
+            title="Member verified",
+            description=f"```{trimmed}```", color=Color.green(),
+            timestamp=datetime.now()
+        )
     finally:
         # Remove the reaction on the main message
         trigger_messsage = await get_verify_trigger_message()
         await trigger_messsage.remove_reaction(VERIFICATION_TRIGGER_EMOJI, member)
+
+        # Send the log embed if enabled
+        log_channel = await get_logging_channel()
+        if log_channel is not None:
+            embed.set_footer(
+                text=f"Member: {member.name}#{member.discriminator} ({member.id})",
+                icon_url=member.avatar_url
+            )
+
+            await log_channel.send(embed=embed)
 
 
 #############

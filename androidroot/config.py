@@ -24,12 +24,25 @@ SPECIAL_USERS_IDS = [int(id_) for id_ in loads(config.get("Bot", "special_user_i
 log.info(f"Special users: {', '.join([str(a) for a in SPECIAL_USERS_IDS])}")
 
 #######
-# ServerConfiguration
+# TriggerConfig
 #######
 GUILD_ID: int = config.getint("TriggerConfig", "guild_id")
 VERIFICATION_TRIGGER_CHANNEL_ID: int = config.getint("TriggerConfig", "verification_trigger_channel_id")
 VERIFICATION_TRIGGER_MESSAGE_ID: int = config.getint("TriggerConfig", "verification_trigger_message_id")
 VERIFICATION_TRIGGER_EMOJI: str = config.get("TriggerConfig", "verification_trigger_emoji")
 
+#######
+# AuthConfig
+#######
 VERIFICATION_CHANNEL_CATEGORY_ID: int = config.getint("AuthConfig", "verification_channel_category_id")
 VERIFICATION_SUCCESS_ROLE_ID: int = config.getint("AuthConfig", "verification_success_role_id")
+
+#######
+# Logging
+#######
+LOG_VERIFICATIONS_CONSOLE = config.getboolean("Logging", "log_verification_to_console")
+LOG_VERIFICATIONS_CHANNEL = config.get("Logging", "log_verification_to_channel")
+try:
+    LOG_VERIFICATIONS_CHANNEL = int(LOG_VERIFICATIONS_CHANNEL)
+except ValueError:
+    LOG_VERIFICATIONS_CHANNEL = None
