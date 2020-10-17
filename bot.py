@@ -188,11 +188,12 @@ async def begin_verification(member: Member):
         if len(responses) == 0:
             if LOG_VERIFICATIONS_CONSOLE:
                 log.info(f"Member failed to verify (timeout): {member.name}#{member.discriminator} ({member.id}), "
-                         f"no responses")
+                         f"expected '{random_code} {random_emoji_unicode}', no responses")
 
             embed = Embed(
                 title="User failed to verify (timeout)",
-                description="*No response*", color=Color.dark_red(),
+                description=f"*Expected \"{random_code} {random_emoji_unicode}\"*\n"
+                            f"*No response*", color=Color.dark_red(),
                 timestamp=datetime.now()
             )
         else:
@@ -204,11 +205,12 @@ async def begin_verification(member: Member):
 
             if LOG_VERIFICATIONS_CONSOLE:
                 log.info(f"Member not verified (timeout): {member.name}#{member.discriminator} ({member.id}), "
-                         f"last response '{trimmed}'")
+                         f"expected '{random_code} {random_emoji_unicode}', last response '{trimmed}'")
 
             embed = Embed(
                 title="Member failed to verify (timeout)",
-                description=f"Last response:\n```{trimmed}```", color=Color.red(),
+                description=f"*Expected \"{random_code} {random_emoji_unicode}\"*\n"
+                            f"Last response:\n```{trimmed}```", color=Color.red(),
                 timestamp=datetime.now()
             )
     else:
@@ -227,11 +229,13 @@ async def begin_verification(member: Member):
             trimmed = f"{trimmed[:1000]}[...]"
 
         if LOG_VERIFICATIONS_CONSOLE:
-            log.info(f"Member verified: {member.name}#{member.discriminator} ({member.id}) with message '{trimmed}'")
+            log.info(f"Member verified: {member.name}#{member.discriminator} ({member.id}) with message '{trimmed}' "
+                     f"(expected \"{random_code} {random_emoji_unicode}\")")
 
         embed = Embed(
             title="Member verified",
-            description=f"```{trimmed}```", color=Color.green(),
+            description=f"*Expected \"{random_code} {random_emoji_unicode}\"*\n"
+                        f"```{trimmed}```", color=Color.green(),
             timestamp=datetime.now()
         )
     finally:
