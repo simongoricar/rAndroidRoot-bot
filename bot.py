@@ -17,7 +17,7 @@ from androidroot.config import BOT_TOKEN, BOT_PREFIX, GUILD_ID, \
     VERIFICATION_TRIGGER_CHANNEL_ID, VERIFICATION_TRIGGER_MESSAGE_ID, VERIFICATION_TRIGGER_EMOJI, \
     VERIFICATION_CHANNEL_CATEGORY_ID, VERIFICATION_SUCCESS_ROLE_ID, \
     LOG_VERIFICATIONS_CONSOLE, LOG_VERIFICATIONS_CHANNEL, \
-    DISCORD_STATUS_NAME_NAME, DISCORD_TYPE, \
+    DISCORD_STATUS_NAME, DISCORD_TYPE, \
     DISCORD_TWITCH
 from androidroot.strings import gets, String
 from androidroot.utilities import generate_id, generate_code
@@ -276,7 +276,7 @@ async def on_ready():
         await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=DISCORD_STATUS_NAME))
 
     elif(DISCORD_TYPE == "streaming"):
-        change_presence(activity=discord.Streaming(name=DISCORD_STATUS_NAME, url=DISCORD_TWITCH))
+        await bot.change_presence(activity=discord.Streaming(name=DISCORD_STATUS_NAME, url=DISCORD_TWITCH))
 
     log.info("Bot is ready: logged in as {bot.user.name} ({bot.user.id})")
     log.info("Checking for Pterodactyl...")
