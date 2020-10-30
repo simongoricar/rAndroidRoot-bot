@@ -46,3 +46,10 @@ try:
     LOG_VERIFICATIONS_CHANNEL = int(LOG_VERIFICATIONS_CHANNEL)
 except ValueError:
     LOG_VERIFICATIONS_CHANNEL = None
+
+#######
+# Status
+#######
+DISCORD_STATUS = config.get("Status", "DISCORD_STATUS")
+DISCORD_STATUS_TYPE = config.get("Status", "DISCORD_STATUS_TYPE")
+DISCORD_TWITCH_URL = config.get("Status", "DISCORD_TWITCH_URL")
