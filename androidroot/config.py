@@ -50,6 +50,6 @@ except ValueError:
 #######
 # Status
 #######
-DISCORD_STATUS_NAME = config.get("Status", "DISCORD_STATUS")
-DISCORD_TYPE = config.get("Status", "DISCORD_STATUS_TYPE")
-DISCORD_TWITCH = config.get("Status", "DISCORD_TWITCH_URL")
+DISCORD_STATUS_NAME = config.get("Status", "discord_status")
+DISCORD_TYPE = config.get("Status", "discord_status_type")
+DISCORD_TWITCH = config.get("Status", "discord_twitch_url")
