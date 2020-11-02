@@ -278,13 +278,12 @@ async def on_ready():
     elif(DISCORD_TYPE == "streaming"):
         await bot.change_presence(activity=discord.Streaming(name=DISCORD_STATUS_NAME, url=DISCORD_TWITCH))
 
-    log.info("Bot is ready: logged in as {bot.user.name} ({bot.user.id})")
+    log.info("Bot is ready: logged in as" + {bot.user.name} ({bot.user.id}))
     log.info("Checking for Pterodactyl...")
-    pterotest = str(sys.argv)
-    if(pterotest[1] == "ptero"):
-        print("Pterodactyl Detected!")
+    if(str(sys.argv[1]) == 'ptero'):
+        log.info("Pterodactyl Detected!")
     else:
-        print("Pterodactyl not found.")
+        log.info("Pterodactyl not found.")
 
     # Really make sure the internal cache is ready
     await bot.wait_until_ready()
