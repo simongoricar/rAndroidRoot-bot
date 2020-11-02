@@ -265,6 +265,7 @@ async def begin_verification(member: Member):
 @bot.listen()
 async def on_ready():
     # badly implement status lmao
+    #str(DISCORD_TYPE.lower())
 
     if(DISCORD_TYPE == "watching"):
         await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=DISCORD_STATUS_NAME))
@@ -278,7 +279,7 @@ async def on_ready():
     elif(DISCORD_TYPE == "streaming"):
         await bot.change_presence(activity=discord.Streaming(name=DISCORD_STATUS_NAME, url=DISCORD_TWITCH))
 
-    log.info("Bot is ready: logged in as" + {bot.user.name} ({bot.user.id}))
+    log.info("Bot is ready: logged in as {bot.user.name} ({bot.user.id})")
     log.info("Checking for Pterodactyl...")
     if(str(sys.argv[1]) == 'ptero'):
         log.info("Pterodactyl Detected!")
