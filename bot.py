@@ -18,7 +18,7 @@ from androidroot.config import BOT_TOKEN, BOT_PREFIX, GUILD_ID, \
     VERIFICATION_CHANNEL_CATEGORY_ID, VERIFICATION_SUCCESS_ROLE_ID, \
     LOG_VERIFICATIONS_CONSOLE, LOG_VERIFICATIONS_CHANNEL, \
     DISCORD_STATUS_NAME, DISCORD_TYPE, \
-    DISCORD_TWITCH
+    DISCORD_TWITCH, DISCORD_STATUS
 from androidroot.strings import gets, String
 from androidroot.utilities import generate_id, generate_code
 from androidroot.checks import is_server_owner, is_special_user, decorate_check
@@ -268,16 +268,16 @@ async def on_ready():
     #str(DISCORD_TYPE.lower())
 
     if(DISCORD_TYPE == "watching"):
-        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=DISCORD_STATUS_NAME))
+        await bot.change_presence(status=discord.Status(DISCORD_STATUS), activity=discord.Activity(type=discord.ActivityType.watching, name=DISCORD_STATUS_NAME))
 
     elif(DISCORD_TYPE == "playing"):
-        await bot.change_presence(activity=discord.Game(name=DISCORD_STATUS_NAME))
+        await bot.change_presence(status=discord.Status(DISCORD_STATUS), activity=discord.Game(name=DISCORD_STATUS_NAME))
 
     elif(DISCORD_TYPE == "listening"):
-        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=DISCORD_STATUS_NAME))
+        await bot.change_presence(status=discord.Status(DISCORD_STATUS), activity=discord.Activity(type=discord.ActivityType.listening, name=DISCORD_STATUS_NAME))
 
     elif(DISCORD_TYPE == "streaming"):
-        await bot.change_presence(activity=discord.Streaming(name=DISCORD_STATUS_NAME, url=DISCORD_TWITCH))
+        await bot.change_presence(status=discord.Status(DISCORD_STATUS), activity=discord.Streaming(name=DISCORD_STATUS_NAME, url=DISCORD_TWITCH))
 
     log.info("Bot is ready: logged in as {bot.user.name} ({bot.user.id})")
     log.info("Checking for Pterodactyl...")
