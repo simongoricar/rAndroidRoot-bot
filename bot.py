@@ -7,7 +7,7 @@ from asyncio import TimeoutError
 from datetime import datetime
 
 from discord import Member, Guild, TextChannel, Message, PermissionOverwrite, Role, \
-    CategoryChannel, Reaction, Embed, Color, Client
+    CategoryChannel, Reaction, Embed, Color, Activity, Status, ActivityType
 from discord.ext.commands import Bot, Context, check_any, CheckFailure
 from discord import RawReactionActionEvent
 from discord.errors import HTTPException
@@ -24,8 +24,6 @@ from androidroot.utilities import generate_id, generate_code
 from androidroot.checks import is_server_owner, is_special_user, decorate_check
 from androidroot.emoji import StandardEmoji, UnicodeEmoji
 import sys
-import discord
-client = discord.Client()
 
 __version__ = "0.3.0"
 
@@ -268,16 +266,16 @@ async def on_ready():
     #str(DISCORD_TYPE.lower())
 
     if(DISCORD_TYPE == "watching"):
-        await bot.change_presence(status=discord.Status(DISCORD_STATUS), activity=discord.Activity(type=discord.ActivityType.watching, name=DISCORD_STATUS_NAME))
+        await bot.change_presence(status=Status(DISCORD_STATUS), activity=Activity(type=ActivityType.watching, name=DISCORD_STATUS_NAME))
 
     elif(DISCORD_TYPE == "playing"):
-        await bot.change_presence(status=discord.Status(DISCORD_STATUS), activity=discord.Game(name=DISCORD_STATUS_NAME))
+        await bot.change_presence(status=Status(DISCORD_STATUS), activity=Game(name=DISCORD_STATUS_NAME))
 
     elif(DISCORD_TYPE == "listening"):
-        await bot.change_presence(status=discord.Status(DISCORD_STATUS), activity=discord.Activity(type=discord.ActivityType.listening, name=DISCORD_STATUS_NAME))
+        await bot.change_presence(status=Status(DISCORD_STATUS), activity=Activity(type=ActivityType.listening, name=DISCORD_STATUS_NAME))
 
     elif(DISCORD_TYPE == "streaming"):
-        await bot.change_presence(status=discord.Status(DISCORD_STATUS), activity=discord.Streaming(name=DISCORD_STATUS_NAME, url=DISCORD_TWITCH))
+        await bot.change_presence(status=Status(DISCORD_STATUS), activity=Streaming(name=DISCORD_STATUS_NAME, url=DISCORD_TWITCH))
 
     log.info("Bot is ready: logged in as {bot.user.name} ({bot.user.id})")
     log.info("Checking for Pterodactyl...")
