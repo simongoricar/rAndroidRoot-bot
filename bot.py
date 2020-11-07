@@ -277,7 +277,7 @@ async def on_ready():
     elif(DISCORD_TYPE == "streaming"):
         await bot.change_presence(status=Status(DISCORD_STATUS), activity=Streaming(name=DISCORD_STATUS_NAME, url=DISCORD_TWITCH))
 
-    log.info("Bot is ready: logged in as {bot.user.name} ({bot.user.id})")
+    log.info(f"Bot is ready: logged in as {bot.user.name} ({bot.user.id})")
     log.info("Checking for Pterodactyl...")
     if(str(sys.argv[1]) == 'ptero'):
         log.info("Pterodactyl Detected!")
