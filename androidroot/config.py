@@ -46,3 +46,11 @@ try:
     LOG_VERIFICATIONS_CHANNEL = int(LOG_VERIFICATIONS_CHANNEL)
 except ValueError:
     LOG_VERIFICATIONS_CHANNEL = None
+
+#######
+# Status
+#######
+DISCORD_STATUS_NAME = config.get("Status", "discord_status")
+DISCORD_TYPE = config.get("Status", "discord_status_type")
+DISCORD_TWITCH = config.get("Status", "discord_twitch_url")
+DISCORD_STATUS = config.get("Status", "discord_member_status")

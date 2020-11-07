@@ -7,7 +7,7 @@ from asyncio import TimeoutError
 from datetime import datetime
 
 from discord import Member, Guild, TextChannel, Message, PermissionOverwrite, Role, \
-    CategoryChannel, Reaction, Embed, Color
+    CategoryChannel, Reaction, Embed, Color, Activity, Status, ActivityType
 from discord.ext.commands import Bot, Context, check_any, CheckFailure
 from discord import RawReactionActionEvent
 from discord.errors import HTTPException
@@ -16,11 +16,14 @@ from androidroot.state import state
 from androidroot.config import BOT_TOKEN, BOT_PREFIX, GUILD_ID, \
     VERIFICATION_TRIGGER_CHANNEL_ID, VERIFICATION_TRIGGER_MESSAGE_ID, VERIFICATION_TRIGGER_EMOJI, \
     VERIFICATION_CHANNEL_CATEGORY_ID, VERIFICATION_SUCCESS_ROLE_ID, \
-    LOG_VERIFICATIONS_CONSOLE, LOG_VERIFICATIONS_CHANNEL
+    LOG_VERIFICATIONS_CONSOLE, LOG_VERIFICATIONS_CHANNEL, \
+    DISCORD_STATUS_NAME, DISCORD_TYPE, \
+    DISCORD_TWITCH, DISCORD_STATUS
 from androidroot.strings import gets, String
 from androidroot.utilities import generate_id, generate_code
 from androidroot.checks import is_server_owner, is_special_user, decorate_check
 from androidroot.emoji import StandardEmoji, UnicodeEmoji
+import sys
 
 __version__ = "0.3.0"
 
@@ -259,7 +262,27 @@ async def begin_verification(member: Member):
 #############
 @bot.listen()
 async def on_ready():
+    # badly implement status lmao
+    #str(DISCORD_TYPE.lower())
+
+    if(DISCORD_TYPE == "watching"):
+        await bot.change_presence(status=Status(DISCORD_STATUS), activity=Activity(type=ActivityType.watching, name=DISCORD_STATUS_NAME))
+
+    elif(DISCORD_TYPE == "playing"):
+        await bot.change_presence(status=Status(DISCORD_STATUS), activity=Game(name=DISCORD_STATUS_NAME))
+
+    elif(DISCORD_TYPE == "listening"):
+        await bot.change_presence(status=Status(DISCORD_STATUS), activity=Activity(type=ActivityType.listening, name=DISCORD_STATUS_NAME))
+
+    elif(DISCORD_TYPE == "streaming"):
+        await bot.change_presence(status=Status(DISCORD_STATUS), activity=Streaming(name=DISCORD_STATUS_NAME, url=DISCORD_TWITCH))
+
     log.info(f"Bot is ready: logged in as {bot.user.name} ({bot.user.id})")
+    log.info("Checking for Pterodactyl...")
+    if(str(sys.argv[1]) == 'ptero'):
+        log.info("Pterodactyl Detected!")
+    else:
+        log.info("Pterodactyl not found.")
 
     # Really make sure the internal cache is ready
     await bot.wait_until_ready()
